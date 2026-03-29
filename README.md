@@ -1,3 +1,3 @@
 # SKYDOCs
 
-                oraxsl:ignorexmlids="true"
+\s*oraxsl:ignorexmlids="true"
