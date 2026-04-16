@@ -1,9 +1,2 @@
-<xsl:if test="$TelefoniaPlanoItem">
-    <ford:FulfillmentOrderLine>
-        <corecom:Identification>
-            <corecom:ID>
-                <xsl:value-of select="$TelefoniaPlanoItem/corecom:Identification/corecom:ID"/>
-            </corecom:ID>
-        </corecom:Identification>
-    </ford:FulfillmentOrderLine>
-</xsl:if>
+\s+xml:id="id_\d+"
+[\r\n\s]*oraxsl:ignorexmlids="true"
