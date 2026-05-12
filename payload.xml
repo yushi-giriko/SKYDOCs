@@ -1,2 +1,19 @@
-\s+xml:id="id_\d+"
-[\r\n\s]*oraxsl:ignorexmlids="true"
+<property name="oracle.webservices.http.headers">
+  X-Seller-Place,X-Seller-Client,X-Seller-Provider
+</property>
+
+
+<invoke name="Invoke_MinhaApiRest"
+        partnerLink="MinhaApiRest"
+        operation="..."
+        inputVariable="..."
+        outputVariable="..."
+        bpelx:invokeAsDetail="no">
+
+   <bpelx:toProperties>
+      <bpelx:toProperty name="X-Seller-Place" variable="varSellerPlace"/>
+      <bpelx:toProperty name="X-Seller-Client" variable="varSellerClient"/>
+      <bpelx:toProperty name="X-Seller-Provider" variable="varSellerProvider"/>
+   </bpelx:toProperties>
+
+</invoke>
