@@ -17,3 +17,14 @@
    </bpelx:toProperties>
 
 </invoke>
+
+
+<reference name="NOME_DO_SEU_SERVICE_REST" ui:wsdlLocation="...">
+    <interface.wsdl interface="..."/>
+    <binding.rest location="URL_DA_API">
+        <!-- ADICIONE AS LINHAS ABAIXO -->
+        <property name="rest.binding.http.X-Seller-Place" type="xs:string" many="false">BR</property>
+        <property name="rest.binding.http.X-Seller-Client" type="xs:string" many="false">Maestro</property>
+        <property name="rest.binding.http.X-Seller-Provider" type="xs:string" many="false">SURF-TELECOM</property>
+    </binding.rest>
+</reference>
