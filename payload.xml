@@ -1,3 +1,5 @@
+https://dl.eviware.com/soapuios/5.7.2/SoapUI-5.7.2-windows-bin.zip
+
 <property name="oracle.webservices.http.headers">
   X-Seller-Place,X-Seller-Client,X-Seller-Provider
 </property>
