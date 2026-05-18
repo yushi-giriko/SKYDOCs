@@ -76,9 +76,25 @@
       <ns14:fulfillmentOrderId>
         <xsl:value-of select="/ns0:ProcessHardwareFulfillmentOrderEBM/ns0:DataArea/ns0:ProcessHardwareFulfillmentOrder/corecom:Identification/corecom:ID"/>
       </ns14:fulfillmentOrderId>
-      <ns20:inventoryInformation>
-        <xsl:value-of select="$InvokeCustomerPartyEBSCallQueryCustomerParty_OutputVariable.QueryCustomerPartyResponseEBM/ns1:QueryCustomerPartyResponseEBM/ns1:DataArea/ns1:QueryCustomerPartyResponse/ns1:CustomerPartyAccount/ns1:Custom/ns11:Keywords/ns11:KeywordType"/>
+            <ns20:inventoryInformation>
+        <xsl:value-of select="concat(
+          '&lt;Service&gt;',
+            '&lt;Lin&gt;&lt;Description&gt;DDD&lt;/Description&gt;&lt;value&gt;', 
+            $InvokeCustomerPartyEBSCallQueryCustomerParty_OutputVariable.QueryCustomerPartyResponseEBM/ns1:QueryCustomerPartyResponseEBM/ns1:DataArea/ns1:QueryCustomerPartyResponse/ns1:CustomerPartyAccount/ns1:Custom/ns11:Keywords[ns11:KeywordType='SKY_MOBILE_DDD']/ns11:KeywordValue, 
+            '&lt;/value&gt;&lt;/Lin&gt;',
+            '&lt;Lin&gt;&lt;Description&gt;NumeroOriginal&lt;/Description&gt;&lt;value&gt;', 
+            $InvokeCustomerPartyEBSCallQueryCustomerParty_OutputVariable.QueryCustomerPartyResponseEBM/ns1:QueryCustomerPartyResponseEBM/ns1:DataArea/ns1:QueryCustomerPartyResponse/ns1:CustomerPartyAccount/ns1:Custom/ns11:Keywords[ns11:KeywordType='SKY_MOBILE_PORT_IN_NO_ORIGIN']/ns11:KeywordValue, 
+            '&lt;/value&gt;&lt;/Lin&gt;',
+            '&lt;Lin&gt;&lt;Description&gt;OperadoraOriginal&lt;/Description&gt;&lt;value&gt;', 
+            $InvokeCustomerPartyEBSCallQueryCustomerParty_OutputVariable.QueryCustomerPartyResponseEBM/ns1:QueryCustomerPartyResponseEBM/ns1:DataArea/ns1:QueryCustomerPartyResponse/ns1:CustomerPartyAccount/ns1:Custom/ns11:Keywords[ns11:KeywordType='SKY_MOBILE_PORT_IN_OPERATOR']/ns11:KeywordValue, 
+            '&lt;/value&gt;&lt;/Lin&gt;',
+            '&lt;Lin&gt;&lt;Description&gt;DocumentoTitular&lt;/Description&gt;&lt;value&gt;', 
+            $InvokeCustomerPartyEBSCallQueryCustomerParty_OutputVariable.QueryCustomerPartyResponseEBM/ns1:QueryCustomerPartyResponseEBM/ns1:DataArea/ns1:QueryCustomerPartyResponse/ns1:CustomerPartyAccount/ns1:Custom/ns11:Keywords[ns11:KeywordType='SKY_MOBILE_DOC_TITULAR']/ns11:KeywordValue, 
+            '&lt;/value&gt;&lt;/Lin&gt;',
+          '&lt;/Service&gt;'
+        )"/>
       </ns20:inventoryInformation>
+
     </tns:CreateWorkOrderRequestEBM>
   </xsl:template>
 </xsl:stylesheet>
