@@ -1,3 +1,11 @@
+eu inclui esse if:
+if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Tecnologia']/ns10:Specification[1]/ns10:Value) = 'FIBRA') or ((count($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns11:SubCategory='Telefonia_Plano') > 0) and  empty($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:Keywords[ns4:KeywordType='SKY_MOBILE_ICCID']/ns4:KeywordValue/text())) then
+					<ns0:TechnicalInfo>
+						{ data($createWorkOrderRequestEBM1/ns21:inventoryInformation)}
+            		</ns0:TechnicalInfo>
+
+na xquery abaixo, voce acha que vai funcionar?
+
 (:: pragma bea:global-element-parameter parameter="$createWorkOrderRequestEBM1" element="ns3:CreateWorkOrderRequestEBM" location="../xsd/CreateWorkOrderRequestEBM.xsd" ::)
 (:: pragma bea:global-element-parameter parameter="$queryCustomerPartyResponseEBM1" element="ns14:QueryCustomerPartyResponseEBM" location="../../../../AIA_OSB/AIAMetaData/CustomerParty/CustomerPartyEBM.xsd" ::)
 (:: pragma bea:global-element-parameter parameter="$queryFulfillmentOrderResponseEBM1" element="ns6:QueryFulfillmentOrderResponseEBM" location="../../../../AIA_OSB/AIAMetaData/FulfillmentOrder/FulfillmentOrderEBM.xsd" ::)
