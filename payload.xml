@@ -1,1 +1,1 @@
-como que eu faço uma xquery, na versão 11.1.1 do Oracle service bus, para validar se esse xpath esta vazio ou não existe:$queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:Keywords[ns4:KeywordType='SKY_MOBILE_ICCID']/ns4:KeywordValue
+fn:not(fn:empty($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:Keywords[ns4:KeywordType='SKY_MOBILE_ICCID']/ns4:KeywordValue/text()))
