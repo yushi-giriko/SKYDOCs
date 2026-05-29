@@ -1,2 +1,1 @@
-\s+xml:id="id_\d+"
-[\r\n\s]*oraxsl:ignorexmlids="true"
+Access to XMLHttpRequest at 'https://apicorehml.sky.com.br/mobileservice-ms/v1/createorder' from origin 'https://plugins-0-ofsc-62c9fa.test.fs.ocs.oraclecloud.com' has been blocked by CORS policy: Response to preflight request doesn't pass access control check: No 'Access-Control-Allow-Origin' header is present on the requested resource.
