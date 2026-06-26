@@ -1,15 +1,23 @@
-				{
-					if ((data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Tecnologia']/ns10:Specification[1]/ns10:Value) = 'FIBRA') 
-						or 
-						(
-							(count($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine[ns10:InstalledProductReference/ns10:Custom/ns11:SubCategory='Telefonia_Plano']) > 0) 
-							and  
-							empty($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:Keywords[ns4:KeywordType='SKY_MOBILE_ICCID']/ns4:KeywordValue/text())
-						)
-					) then
-						<ns0:TechnicalInfo>
-							{ data($createWorkOrderRequestEBM1/ns21:inventoryInformation)}
-						</ns0:TechnicalInfo>
-					else
-						()
-				}
+<catchAll>
+   <sequence name="CatchAllHandler">
+
+      <if name="ValidaOrdemJaCadastrada">
+         <condition>
+            contains(ora:getFaultAsString(), 'Ordem ja cadastrada')
+         </condition>
+
+         <sequence name="IgnoraOrdemJaCadastrada">
+            <!-- opcional: grava log -->
+            <!-- não faz throw/rethrow -->
+            <!-- fluxo continua após o scope -->
+         </sequence>
+
+         <else>
+            <!-- tratamento padrão para os demais erros -->
+            <!-- ex: gerar payload de erro, chamar callback, encerrar processo etc. -->
+         </else>
+
+      </if>
+
+   </sequence>
+</catchAll>
