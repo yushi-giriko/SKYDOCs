@@ -1,46 +1,67 @@
-Passo 1: Localizar os dados necessários
-Você vai precisar de duas informações que estão no diretório do seu domínio:
-
-A string criptografada da senha:
-Abra o arquivo boot.properties do AdminServer (geralmente em .../domains/seu_dominio/servers/AdminServer/security/boot.properties) e copie o valor da linha password. Ela se parece com isso:
-password={AES}g2H1sK...=
-
-O caminho da pasta do domínio:
-O script precisa saber onde está o arquivo SerializedSystemIni.dat (geralmente fica na raiz da pasta do seu domínio ou dentro de security).
-
-Passo 2: Rodar o Decryptor via WLST
-Vá até a pasta de binários do seu domínio para carregar as variáveis de ambiente:
-
-Bash
-cd /u01/oracle/user_projects/domains/seu_dominio/bin
-source ./setDomainEnv.sh
-
-2. Inicie o WLST em modo interativo (linha de comando do WebLogic):
-   ```bash
-   wlst.sh
-(Aguarde o prompt mudar para wls:/offline>_)
-
-Cole as seguintes linhas de comando no prompt (ajustando os caminhos e a sua string criptografada):
-
-Python
-import weblogic.security.internal.SerializedSystemIni
-import weblogic.security.internal.encryption.ClearOrEncryptedService
-
-# 1. Defina o caminho exato do seu domínio
-domain_path = "/u01/oracle/user_projects/domains/seu_dominio"
-
-# 2. Carrega a chave de criptografia do domínio
-encryption_service = weblogic.security.internal.SerializedSystemIni.getEncryptionService(domain_path)
-ces = weblogic.security.internal.encryption.ClearOrEncryptedService(encryption_service)
-
-# 3. Cole a string criptografada que você pegou no boot.properties (mantenha as aspas)
-senha_criptografada = "{AES}g2H1sK+sua_string_aqui..."
-
-# 4. Executa a descriptografia
-print "A SENHA ATUAL E: " + ces.decrypt(senha_criptografada)
-
-4. Assim que você der Enter na última linha, o terminal vai printar a senha em texto aberto.
-
-5. Para sair do WLST, basta digitar:
-   ```python
-   exit()
+Faulted while invoking operation "createorder" on provider "MobileService".
+<messages>
+<input>
+<InvokeMobileService_createOrder_createorder_InputVariable>
+<part xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="request">
+<request xmlns:svcdoc="http://xmlns.oracle.com/Services/Documentation/V1" xmlns:client="http://xmlns.oracle.com/EnterpriseFlows/Industry/Comms/ProcessSoftwareFulfillmentOrderEBFMIP/V1" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:corecustomerpartyebs="http://xmlns.oracle.com/EnterpriseServices/Core/CustomerParty/V2" xmlns:plnk="http://docs.oasis-open.org/wsbpel/2.0/plnktype" xmlns:inp2="http://TargetNamespace.com/MobileService_createorder_response" xmlns:ebs="http://xmlns.oracle.com/EnterpriseServices/Core/FulfillmentOrder/V1" xmlns:corecom="http://xmlns.oracle.com/EnterpriseObjects/Core/Common/V2" xmlns:ns9="http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/EBO/FulfillmentOrder/V1" xmlns:ns12="http://xmlns.oracle.com/ProcessSoftwareFulfillmentOrderEBFMIP/ProcessSoftwareFulfillmentOrderEBFMIP/MobileService" xmlns:ns5="http://xmlns.oracle.com/EnterpriseObjects/Core/EBO/Validation/V1" xmlns:ns6="http://schemas.xmlsoap.org/ws/2003/03/addressing" xmlns:ns10="http://xmlns.oracle.com/EnterpriseServices/CustomerParty/V2" xmlns:ns7="urn:oasis:names:tc:xacml:2.0:policy:schema:cd:04" xmlns:ns8="http://www.sky.com.br/ArchitectureSchemas" xmlns:ns11="http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/EBO/CustomerParty/V2" xmlns:ns2="http://xmlns.oracle.com/EnterpriseServices/FulfillmentOrder/V1" xmlns:ns4="http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/Common/V2" xmlns:ns3="urn:oasis:names:tc:xacml:2.0:context:schema:cd:04" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="http://TargetNamespace.com/MobileService_createorder_request" xmlns="http://TargetNamespace.com/MobileService_createorder_request">
+<tns:serviceOrder>
+<tns:name>CustomerOrderIdentifier</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>1-56045895145</tns:value>
+</tns:serviceOrder>
+<tns:serviceOrder>
+<tns:name>AccountIdentifier</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>1520361878</tns:value>
+</tns:serviceOrder>
+<tns:serviceOrderItem>
+<tns:name>operationType</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>activation</tns:value>
+</tns:serviceOrderItem>
+<tns:serviceOrderItem>
+<tns:name>iccid</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>8955170220466370751</tns:value>
+</tns:serviceOrderItem>
+<tns:serviceOrderItem>
+<tns:name>ddd</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>11</tns:value>
+</tns:serviceOrderItem>
+<tns:serviceOrderItem>
+<tns:name>document</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>26919584000</tns:value>
+</tns:serviceOrderItem>
+<tns:serviceOrderItem>
+<tns:name>planCode</tns:name>
+<tns:valueType>string</tns:valueType>
+<tns:value>2069</tns:value>
+</tns:serviceOrderItem>
+</request>
+</part>
+</InvokeMobileService_createOrder_createorder_InputVariable>
+</input>
+<fault>
+<bpelFault>
+<faultType>0</faultType>
+<bindingFault xmlns="http://schemas.oracle.com/bpel/extension">
+<part name="summary">
+<summary>Internal Server Error</summary>
+</part>
+<part name="detail">
+<detail>
+{"success":false,"eventId":null,"serviceOrderId":null,"timestamp":"2026-06-26T18:14:31.505293679Z","message":"Ordem ja cadastrada. customerOrder=1-56045895145 account=1520361878"}
+</detail>
+</part>
+<part name="code">
+<code>500</code>
+</part>
+</bindingFault>
+</bpelFault>
+</fault>
+<faultType>
+<message>0</message>
+</faultType>
+</messages>
