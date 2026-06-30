@@ -1,1 +1,2 @@
 <xsl:value-of select="xp20:format-dateTime(xp20:current-dateTime(),'[D01]/[M01]/[Y] [s01]')"/>
+<xsl:value-of select="xp20:format-dateTime(xp20:current-dateTime(),'[D01]/[M01]/[Y0001] [H01]:[m01]')"/>
