@@ -1,40 +1,364 @@
-Cenário de Negócio Atual
+(:: pragma bea:global-element-parameter parameter="$createWorkOrderRequestEBM1" element="ns3:CreateWorkOrderRequestEBM" location="../xsd/CreateWorkOrderRequestEBM.xsd" ::)
+(:: pragma bea:global-element-parameter parameter="$queryCustomerPartyResponseEBM1" element="ns14:QueryCustomerPartyResponseEBM" location="../../../../AIA_OSB/AIAMetaData/CustomerParty/CustomerPartyEBM.xsd" ::)
+(:: pragma bea:global-element-parameter parameter="$queryFulfillmentOrderResponseEBM1" element="ns6:QueryFulfillmentOrderResponseEBM" location="../../../../AIA_OSB/AIAMetaData/FulfillmentOrder/FulfillmentOrderEBM.xsd" ::)
+(:: pragma bea:global-element-return element="ns9:CreateJobCard" location="../../../CommunicationsWorkOrderEBSV1/Resource/xsd/JobCardService0.xsd" ::)
 
-Foi identificado o incidente SKYIT-2147161, no qual os pedidos de Telefonia Addon (A La Carte Addon) são concluídos com sucesso no Maestro, porém a integração com a plataforma SURF não ocorre em determinados cenários.
+declare namespace ns14 = "http://xmlns.oracle.com/EnterpriseObjects/Core/EBO/CustomerParty/V2";
+declare namespace ns9 = "http://tempuri.org/";
+declare namespace ns5 = "http://www.sky.com.br/ArchitectureSchemas";
+declare namespace ns12 = "http://schemas.datacontract.org/2004/07/Sky.ServiceOrder.Entity.EBS";
+declare namespace ns13 = "urn:oasis:names:tc:xacml:2.0:context:schema:cd:04";
+declare namespace ns6 = "http://xmlns.oracle.com/EnterpriseObjects/Core/EBO/FulfillmentOrder/V1";
+declare namespace ns7 = "http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/EBO/FulfillmentOrder/V1";
+declare namespace ns10 = "http://xmlns.oracle.com/EnterpriseObjects/Core/Common/V2";
+declare namespace ns8 = "http://www.sky.com.br/Core/CustomerEBO/V1";
+declare namespace ns11 = "http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/Common/V2";
+declare namespace ns2 = "http://www.sky.com.br/Commons/HeaderType/V1";
+declare namespace ns1 = "http://www.sky.com.br/Core/FulfillmentOrder/V1";
+declare namespace ns4 = "http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/EBO/CustomerParty/V2";
+declare namespace ns3 = "http://www.sky.com.br/message/CommunicationsWorkOrderEBS/V2";
+declare namespace ns0 = "http://schemas.datacontract.org/2004/07/Sky.ServiceOrder.Entity";
+declare namespace ns20 = "http://www.sky.com.br/Core/Commons/PaymentType/V1";
+declare namespace ns21 = "http://www.sky.com.br/Core/ProductEBO/V1";
+declare namespace xf = "http://tempuri.org/Integration/CommunicationsWorkOrderEBSV2/Resource/xq/TransformReqCreateWorkOrderXQ/";
 
-Como consequência, o cliente consegue adquirir o produto normalmente, porém a SURF não recebe a solicitação de provisionamento, gerando inconsistência entre os sistemas e impedindo a correta ativação do serviço.
+declare function xf:TransformReqCreateWorkOrderHomeXQ($consumerSystem as xs:string, $createWorkOrderRequestEBM1 as element(ns3:CreateWorkOrderRequestEBM),
+    $queryCustomerPartyResponseEBM1 as element(ns14:QueryCustomerPartyResponseEBM),
+    $queryFulfillmentOrderResponseEBM1 as element(ns6:QueryFulfillmentOrderResponseEBM))
+    as element(ns9:CreateJobCard) {
+    		    
+        <ns9:CreateJobCard>
+                   	
+            <ns9:identity>
+                <ns0:System>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:SalesChannelCode) }</ns0:System>
+                <ns0:SystemName>{data($consumerSystem)}</ns0:SystemName>
+                <ns0:User>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns10:WorkerReference/ns10:WorkerIdentification/ns10:ID) }</ns0:User>           	
+            </ns9:identity>
+            <ns9:serviceOrder>
+            	
+            	{
+            	let $optionals := (string-join($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom[ns11:Category = 'A La Carte']/ns10:ItemReference/ns10:Description, ' | ')) return            		
+            	let $promotion := ($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns10:ItemReference[ns10:TypeCode = 'Promotion']/ns10:Description) return 
+            	let $price := ($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom[ns10:ItemReference/ns10:TypeCode = 'Promotion']/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Sky Preço Pacote']/ns10:Specification/ns10:Value) return
+            	let $discount := (string-join($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom[ns11:Category = 'Desconto']/ns10:ItemReference/ns10:Description, ' / ')) return
+            	let $paymentMethod := ($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) return
+            	let $otherPayments := ($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount/ns14:Custom/ns4:PaymentMethodCode) return
+            	let $orderDate := ($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:OrderDateTime) return
+            	
+            	let $finalString := (
+            		concat (
+		            			(
+		            				if ($promotion != '') then concat(' Pacote de Programação: ', $promotion, ' - ',  $price, ' (este valor já contempla desconto por pagamento com Cartão de Crédito ou débito em C/C).') else ()
+		            			),
+            					'&#10;',
+            					' Em caso de desconto na mensalidade pelo pagamento via cartão de crédito ou débito em conta, ' ,           		
+            					'a alteração para pagamento via boleto acarretará a perda desse desconto. ',
+            					'O mesmo ocorre caso o débito seja rejeitado de sua conta.',
+            					'&#10;',
+            					(
+            						if ($discount != '') then concat(' / Desc./Condições Especiais: ', $discount)
+            						else ('Desc./Condições Especiais: NÃO HÁ ')
+            					),    
+            					(
+            						if ($optionals != '') then concat(' / Opcionais: ', $optionals) else ()
+            					),
+            					'&#10;',
+            					(
+            						if ($orderDate != '') then concat(' / DATA VENDA: ', fn-bea:dateTime-to-string-with-format("MM/dd/yyyy", xs:dateTime($orderDate))) else ()
+            					),  
+								'FORMA DE PAGTO.: Taxa de Adesão: ', 
+		            			(
+		            				if ($paymentMethod = 'Credit Card') then 'Cartão de Crédito' else (
+		            					if ($paymentMethod = 'Bill Me') then 'Boleto' else (
+		            						'Débito em Conta'
+		            					)
+		            				)
+		            			),
+		            			(
+		            				if ($otherPayments != '') then concat(' / Demais Mensalidades: ', 
+		            					(
+				            				if ($otherPayments = 'Credit Card') then 'Cartão de Crédito' else (
+				            					if ($otherPayments = 'Bill Me') then 'Boleto' else (
+				            						'Débito em Conta'
+				            					)
+				            				)            					
+		            					)
+		            				) else ()
+		            			),
+		            			(
+		            				if ($discount != '') then concat(' / Desc./Condições Especiais: ', $discount)
+		            				else ('Desc./Condições Especiais: NÃO HÁ ')
+		            			),
+								'&#10;',
+								' Vencimento: 30 dias após instalação'           			          			            			        			 
+            				)
+            	)		
+            	return
+            	
+					<ns0:CommercialConditions>{ substring($finalString,1, 2000) }</ns0:CommercialConditions>
+					
+            	}
+                <ns0:Customer>
+                	<ns0:BasicProductSiebel>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns10:ItemReference[ns10:TypeCode = 'Promotion']/ns10:ItemIdentification/ns10:GTIN) }</ns0:BasicProductSiebel>
+                    <ns0:CPF_CNPJ>
+                        {
+                            if (data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:Person/ns10:TaxPayerIdentificationNumber != '')) then
+                                (data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:Person/ns10:TaxPayerIdentificationNumber))
+                            else 
+                                data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:Organization/ns10:TaxPayerIdentificationNumberID)
+                        }
+					</ns0:CPF_CNPJ>
+                    <ns0:CustomerType>{ string-to-codepoints(data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:ClassificationCode)) }</ns0:CustomerType>
+                    <ns0:Email>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:PartyLocation/ns10:LocationReference/ns10:Custom/ns11:EmailCommunication) }</ns0:Email>
+                    <ns0:HomeAddress>
+                        <ns0:Area>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:LineOne[1]) }</ns0:Area>
+                        <ns0:City>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:CityName[1]) }</ns0:City>
+                        <ns0:Complement>
+                            {
+                                concat($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:LineThree[1],
+                                $queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:LineFour[1])
+                            }
+						</ns0:Complement>
+                        <ns0:District>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:CitySubDivisionName[1]) }</ns0:District>
+                        <ns0:Locality>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:Custom/ns11:Directions) }</ns0:Locality>
+                        <ns0:Number>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:LineTwo[1]) }</ns0:Number>
+                        <ns0:Province>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:StateName[1]) }</ns0:Province>
+                        <ns0:ZipCode>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[ns10:Custom/ns11:Typification = 'INSTALACAO']/ns10:Address/ns10:LongPostalCode) }</ns0:ZipCode>
+                    </ns0:HomeAddress>
+                    <ns0:IsPrime>
+                        {
+                            if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine[ns10:InstalledProductReference/ns10:Custom/ns10:ItemReference/ns10:Custom/SubCategory = 'Prime'])) then
+                                (data('1'))
+                            else 
+                                data('0')
+                        }
+					</ns0:IsPrime>
+                    <ns0:Name>
+                        {
+                            if ($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:Person/ns10:PersonName[1]/ns10:FullName[1] != '') then
+                                (data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:Person/ns10:PersonName[1]/ns10:FullName[1]))
+                            else 
+                                data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns10:Organization/ns10:ShortName[1])
+                        }
+					</ns0:Name>
+                    <ns0:Phone>{ concat($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[1]/ns10:Custom/ns11:PhoneCommunication[1]/ns10:AreaCode , $queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns10:LocationReference[1]/ns10:Custom/ns11:PhoneCommunication[1]/ns10:LocalNumber[1]) }</ns0:Phone>
+                    <ns0:PhoneCell>{ concat($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:MobileCommunication/ns10:AreaCode , $queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:MobileCommunication/ns10:LocalNumber[1]) }</ns0:PhoneCell>
+                    <ns0:PhoneCom>{ concat($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:CommercialPhoneCommunication/ns10:AreaCode , $queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:CommercialPhoneCommunication/ns10:LocalNumber[1]) }</ns0:PhoneCom>
+                    <ns0:PlanDescription>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns10:ItemReference[ns10:TypeCode = 'Promotion']/ns10:Description[1]) }</ns0:PlanDescription>
+                    <ns0:SubscriptionID>{ data($createWorkOrderRequestEBM1/ns8:customerId) }</ns0:SubscriptionID>
+                    <ns0:Type>
+                        <ns0:Description>{ data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:ClassificationCode) }</ns0:Description>
+                        <ns0:Id>{ string-to-codepoints(data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:ClassificationCode)) }</ns0:Id>
+                    </ns0:Type>
+                </ns0:Customer>
+                {
+                let $specialServiceOrder := data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:ModeOfTransportCode) return
+                if ($specialServiceOrder) then
+                	<ns0:Dealer>
+                		<ns0:Id>{$specialServiceOrder}</ns0:Id>
+                	</ns0:Dealer>
+                else
+                	()
+                }
+                <ns0:Itens>
+                    {
+                        for $Items  in ($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine)  
+                        return
+                            if ( data($Items/ns10:InstalledProductReference/ns10:Custom/ns11:Category) = 'Equipamento') then
+                                (<ns0:JobCardService>
+                                <ns0:ChannelSale>
+                                {
+                                if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:ChannelUpdate) = 'Parceiro') then
+                                (data('Dealer'))
+                                else 
+                                (data('TeleMarketing'))
+                                }
+                                </ns0:ChannelSale>
+                                <ns0:ChannelSaleTypeCode>
+                                {
+                                if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:ChannelUpdate) = 'Parceiro') then
+                                (string-to-codepoints(data('D')))
+                                elseif (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:ChannelUpdate) = 'E-Commerce') then
+                                (string-to-codepoints(data('A')))
+                                else
+                                (string-to-codepoints(data('E')))
+                                }
+                                </ns0:ChannelSaleTypeCode>
+                                <ns0:ContractDate>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:OrderDateTime) }</ns0:ContractDate>
+                                {
+                                if ( data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:InstallPDVFlag))then
+                                <ns0:DefineDealerAlocation>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:InstallPDVFlag/text()) }</ns0:DefineDealerAlocation>
+                                  else()
+                                  }
+								<ns0:Equipment>
+                                <ns0:Group>
+                                <ns0:Description>{
+                                if (data($Items/ns10:InstalledProductReference/ns10:Custom/ns11:SubCategory='Banda Larga')) then 
+                                	if(data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Tecnologia']/ns10:Specification[1]/ns10:Value) = 'FIBRA') then
+                                	(data('MODEM FIBRA'))
+                                	else
+                                	(data('MODEM'))
+                                else
+                                (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom[$Items/ns10:Identification/ns10:ID = ns11:ParentIdentification/ns10:ID]/ns11:InstalledProductSpecificationGroup[1]/ns10:SpecificationGroup[ns10:Name = 'Família']/ns10:Specification[1]/ns10:Value[1])) }
+                                </ns0:Description>
+                                </ns0:Group>
+                                </ns0:Equipment>
+                                 <ns0:FinanceOption>
+                                {
+                                if (data($Items/ns10:InstalledProductReference/ns10:Custom/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Tipo de Aquisição']/ns10:Specification[1]/ns10:Value) = 'Venda') then
+                                (data('Sale'))
+                                else
+                                (data('Lending'))
+                                }
+                                </ns0:FinanceOption>
+                                <ns0:FulfillmentOrderId>{ data($createWorkOrderRequestEBM1/ns1:fulfillmentOrderId) }</ns0:FulfillmentOrderId>
+                                <ns0:FulfillmentOrderItemId>{ data($Items/ns10:Identification/ns10:ID) }</ns0:FulfillmentOrderItemId>
+                                <ns0:PaymentDate>{ current-dateTime() }</ns0:PaymentDate>
+                                <ns0:PaymentTypeId>{ 
+                                if (count($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom[ns11:Category='Faturavel' and ns11:SubCategory='Taxa Instalação Pré']/ns10:ItemReference/ns10:ItemIdentification/ns10:GTIN) > 0 )then
+									(data ('§'))
+                                else
+									if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'Credit Card') then
+									(data ('1'))
+									else (if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'Bill Me') then
+											(data ('C'))
+										   else (if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'PEC') then
+												 data ('_')
+												 else (if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'Debit') then
+												 	   data ('C') else (data ('C')))))                                 
+					 			}</ns0:PaymentTypeId>
+                                <ns0:ProposalId>{data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:SPW)}</ns0:ProposalId>                                						
+                                <ns0:Reason>{
+                                if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:SalesChannelCode)!='Salesforce')then
+                                <ns0:Id>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine[1]/ns6:Custom/ns11:WorkOrderReference/ns11:ProblemCode) }</ns0:Id>
+                                  else()
+                                  }
+                                </ns0:Reason>
+                                <ns0:SaleDealerCode>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:InstallationPartnerParty/ns10:Identification/ns10:ID) }</ns0:SaleDealerCode>
+                                <ns0:SubTypeServiceId>{ if (data($Items/ns6:Custom/ns11:WorkOrderReference/ns11:OperationResult) > 1) then
+                                	(data('PO'))
+                                	else 
+                                	(data('PP'))
+                                }</ns0:SubTypeServiceId>
+                                </ns0:JobCardService>)
+                            elseif(data($Items/ns10:InstalledProductReference/ns10:Custom/ns11:SubCategory) = 'Telefonia_Plano' and $queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:SalesChannelCode)='Salesforce') then
+								(<ns0:JobCardService>
+                                <ns0:ChannelSale>
+                                {
+                                if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:ChannelUpdate) = 'Parceiro') then
+                                (data('Dealer'))
+                                else 
+                                (data('TeleMarketing'))
+                                }
+                                </ns0:ChannelSale>
+                                <ns0:ChannelSaleTypeCode>
+                                {
+                                if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:ChannelUpdate) = 'Parceiro') then
+                                (string-to-codepoints(data('D')))
+                                elseif (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:ChannelUpdate) = 'E-Commerce') then
+                                (string-to-codepoints(data('A')))
+                                else
+                                (string-to-codepoints(data('E')))
+                                }
+                                </ns0:ChannelSaleTypeCode>
+                                <ns0:ContractDate>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:OrderDateTime) }</ns0:ContractDate>
+                                {
+                                if ( data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:InstallPDVFlag))then
+                                <ns0:DefineDealerAlocation>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:InstallPDVFlag/text()) }</ns0:DefineDealerAlocation>
+                                  else()
+                                  }
+								<ns0:Equipment>
+                                <ns0:Group>
+                                <ns0:Description>Telefonia</ns0:Description>
+								<ns0:Id>67</ns0:Id>
+                                </ns0:Group>
+								<sky:Id>895</sky:Id>
+                                </ns0:Equipment>
+                                 <ns0:FinanceOption>
+                                {
+                                if (data($Items/ns10:InstalledProductReference/ns10:Custom/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Tipo de Aquisição']/ns10:Specification[1]/ns10:Value) = 'Venda') then
+                                (data('Sale'))
+                                else
+                                (data('Lending'))
+                                }
+                                </ns0:FinanceOption>
+                                <ns0:FulfillmentOrderId>{ data($createWorkOrderRequestEBM1/ns1:fulfillmentOrderId) }</ns0:FulfillmentOrderId>
+                                <ns0:FulfillmentOrderItemId>{ data($Items/ns10:Identification/ns10:ID) }</ns0:FulfillmentOrderItemId>
+                                <ns0:PaymentDate>{ current-dateTime() }</ns0:PaymentDate>
+                                <ns0:PaymentTypeId>{ 
+                                if (count($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom[ns11:Category='Faturavel' and ns11:SubCategory='Taxa Instalação Pré']/ns10:ItemReference/ns10:ItemIdentification/ns10:GTIN) > 0 )then
+									(data ('§'))
+                                else
+									if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'Credit Card') then
+									(data ('1'))
+									else (if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'Bill Me') then
+											(data ('C'))
+										   else (if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'PEC') then
+												 data ('_')
+												 else (if (data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderPayment/ns6:FulfillmentOrderReceivedPayment/ns6:Custom/ns7:PaymentMethodCode) = 'Debit') then
+												 	   data ('C') else (data ('C')))))                                 
+					 			}</ns0:PaymentTypeId>
+                                <ns0:ProposalId>{data($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:SPW)}</ns0:ProposalId>                                						
+                                <ns0:Reason>
+                                <ns0:Id>1687</ns0:Id>
+                                </ns0:Reason>
+                                <ns0:SaleDealerCode>{ data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:Custom/ns7:InstallationPartnerParty/ns10:Identification/ns10:ID) }</ns0:SaleDealerCode>
+                                <ns0:SubTypeServiceId>ICH</ns0:SubTypeServiceId>
+                                </ns0:JobCardService>)
+							else
+                                ()
+                    }
+</ns0:Itens>
+				{
+				let $datePeriodNode := ($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns6:Custom/ns11:WorkOrderReference[(ns11:PromisedDeliveryDateTime!='') or (ns11:ScheduledTime!="")])[1] return
+				let $promisedDeliveryDateTime := data($datePeriodNode/ns11:PromisedDeliveryDateTime) return
+				let $scheduledTime := data($datePeriodNode/ns11:ScheduledTime) return
+				if ($promisedDeliveryDateTime or $scheduledTime) then
+					<ns0:ScheduledTo>
+						{
+						if ($promisedDeliveryDateTime) then
+							<ns0:Date>{$promisedDeliveryDateTime}</ns0:Date>
+						else
+							()
+						}
+						{
+						if ($scheduledTime) then
+							if ($scheduledTime = 'Afternoon') then
+								<ns0:Period>Afertnoon</ns0:Period>
+							else
+								<ns0:Period>{$scheduledTime}</ns0:Period>
+						else
+							()
+						}
+					</ns0:ScheduledTo>
+				else 
+					()
+				}
+				{
+					if ((data($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine/ns10:InstalledProductReference/ns10:Custom/ns11:InstalledProductSpecificationGroup/ns10:SpecificationGroup[ns10:Name = 'Tecnologia']/ns10:Specification[1]/ns10:Value) = 'FIBRA') 
+						or 
+						(
+							(count($queryFulfillmentOrderResponseEBM1/ns6:DataArea/ns6:QueryFulfillmentOrderResponse/ns6:FulfillmentOrderLine[ns10:InstalledProductReference/ns10:Custom/ns11:SubCategory='Telefonia_Plano']) > 0) 
+							and  
+							empty($queryCustomerPartyResponseEBM1/ns14:DataArea/ns14:QueryCustomerPartyResponse/ns14:CustomerPartyAccount[1]/ns14:Custom/ns4:Keywords[ns4:KeywordType='SKY_MOBILE_ICCID']/ns4:KeywordValue/text())
+						)
+					) then
+						<ns0:TechnicalInfo>
+							{ data($createWorkOrderRequestEBM1/ns21:inventoryInformation)}
+						</ns0:TechnicalInfo>
+            		else
+            		()
+				}
+            </ns9:serviceOrder>
+        </ns9:CreateJobCard>
+};
 
-Atualmente, a comunicação com a SURF depende de regras existentes no processo ProcessSoftwareFulfillment, que acabam não contemplando todos os cenários de contratação de Telefonia Addon.
+declare variable $consumerSystem as xs:string external;
+declare variable $createWorkOrderRequestEBM1 as element(ns3:CreateWorkOrderRequestEBM) external;
+declare variable $queryCustomerPartyResponseEBM1 as element(ns14:QueryCustomerPartyResponseEBM) external;
+declare variable $queryFulfillmentOrderResponseEBM1 as element(ns6:QueryFulfillmentOrderResponseEBM) external;
 
-Cenário Técnico Atual
-
-O processo ProcessSoftwareFulfillment possui validações condicionais que determinam quando deve ocorrer a integração com a plataforma SURF.
-
-Nos cenários de Telefonia Addon, essas validações permitem que determinados pedidos sejam finalizados sem que a chamada para a SURF seja realizada, ocasionando o incidente registrado na SKYIT-2147161.
-
-Dessa forma:
-
-O pedido é processado normalmente pelo Maestro;
-O fluxo é concluído sem erro;
-A integração com a SURF não é executada em todos os cenários de Telefonia Addon;
-O serviço deixa de ser provisionado corretamente na plataforma parceira.
-Cenário de Negócio Proposto
-
-Garantir que todos os pedidos de Telefonia Addon sejam enviados para a plataforma SURF, assegurando que o provisionamento do serviço seja realizado independentemente das demais regras atualmente existentes no fluxo.
-
-Com essa alteração, elimina-se a inconsistência entre os sistemas, garantindo que toda venda de Telefonia Addon resulte na respectiva solicitação de ativação na SURF.
-
-Cenário Técnico Proposto
-
-Será realizada uma alteração no processo ProcessSoftwareFulfillment para incluir uma validação específica para os cenários de Telefonia Addon.
-
-Quando identificado esse tipo de pedido, o processo deverá executar obrigatoriamente a integração com a plataforma SURF, desconsiderando as regras condicionais que atualmente impedem essa comunicação em determinados casos.
-
-Em resumo, a alteração consiste em:
-
-Identificar pedidos do tipo Telefonia Addon;
-Executar obrigatoriamente a integração com a SURF;
-Garantir que a chamada para a SURF ocorra independentemente das demais validações existentes no fluxo;
-Manter inalterado o comportamento dos demais tipos de pedidos.
-
-Essa alteração corrige o incidente SKYIT-2147161 e garante a consistência do processo de provisionamento para os produtos de Telefonia Addon.
+xf:TransformReqCreateWorkOrderHomeXQ($consumerSystem, 
+	$createWorkOrderRequestEBM1,
+    $queryCustomerPartyResponseEBM1,
+    $queryFulfillmentOrderResponseEBM1)
