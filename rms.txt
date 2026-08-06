@@ -1,1 +1,40 @@
-Correção do incidente "https://jira.sky.com.br/browse/SKYIT-2147161", no qual o maestro não está comunicando corretamente a SURF para os pedidos de "Telefonia Addon"
+Cenário de Negócio Atual
+
+Foi identificado o incidente SKYIT-2147161, no qual os pedidos de Telefonia Addon (A La Carte Addon) são concluídos com sucesso no Maestro, porém a integração com a plataforma SURF não ocorre em determinados cenários.
+
+Como consequência, o cliente consegue adquirir o produto normalmente, porém a SURF não recebe a solicitação de provisionamento, gerando inconsistência entre os sistemas e impedindo a correta ativação do serviço.
+
+Atualmente, a comunicação com a SURF depende de regras existentes no processo ProcessSoftwareFulfillment, que acabam não contemplando todos os cenários de contratação de Telefonia Addon.
+
+Cenário Técnico Atual
+
+O processo ProcessSoftwareFulfillment possui validações condicionais que determinam quando deve ocorrer a integração com a plataforma SURF.
+
+Nos cenários de Telefonia Addon, essas validações permitem que determinados pedidos sejam finalizados sem que a chamada para a SURF seja realizada, ocasionando o incidente registrado na SKYIT-2147161.
+
+Dessa forma:
+
+O pedido é processado normalmente pelo Maestro;
+O fluxo é concluído sem erro;
+A integração com a SURF não é executada em todos os cenários de Telefonia Addon;
+O serviço deixa de ser provisionado corretamente na plataforma parceira.
+Cenário de Negócio Proposto
+
+Garantir que todos os pedidos de Telefonia Addon sejam enviados para a plataforma SURF, assegurando que o provisionamento do serviço seja realizado independentemente das demais regras atualmente existentes no fluxo.
+
+Com essa alteração, elimina-se a inconsistência entre os sistemas, garantindo que toda venda de Telefonia Addon resulte na respectiva solicitação de ativação na SURF.
+
+Cenário Técnico Proposto
+
+Será realizada uma alteração no processo ProcessSoftwareFulfillment para incluir uma validação específica para os cenários de Telefonia Addon.
+
+Quando identificado esse tipo de pedido, o processo deverá executar obrigatoriamente a integração com a plataforma SURF, desconsiderando as regras condicionais que atualmente impedem essa comunicação em determinados casos.
+
+Em resumo, a alteração consiste em:
+
+Identificar pedidos do tipo Telefonia Addon;
+Executar obrigatoriamente a integração com a SURF;
+Garantir que a chamada para a SURF ocorra independentemente das demais validações existentes no fluxo;
+Manter inalterado o comportamento dos demais tipos de pedidos.
+
+Essa alteração corrige o incidente SKYIT-2147161 e garante a consistência do processo de provisionamento para os produtos de Telefonia Addon.
