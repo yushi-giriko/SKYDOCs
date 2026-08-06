@@ -1,10 +1,17 @@
-Cenario de negócio atual:
-Hoje no cenário de PayTV+Telefonia a OS gerada no TOA não possui um item especifico para o produto Telefonia. E para o cenário de Telefonia Solo, não é gerada nenhuma OS no TOA
+1. Cenário de Negócio Atual (Revisado)
+Hoje, no cenário de venda conjunta de PayTV + Telefonia A La Carte, a Ordem de Serviço (OS) gerada no TOA contempla apenas os itens de equipamentos físicos de PayTV, não possuindo um item de serviço específico para o provisionamento e ativação do produto de Telefonia. Adicionalmente, no cenário de Telefonia Solo, a tramitação do pedido ocorre sem a geração de nenhuma Ordem de Serviço (OS) para o TOA.
 
-Cenario de Negocio proposto
-Ajustar os fluxos do Maestro para que ele envie as informações para o TOA gerar um item de OS especifico para Telefonia, e no cenário de telefonia Solo, ele deve chamar o TOA para geração de OS
-
-Cenario Técnico atual
+2. Cenário de Negócio Proposto (Revisado)
+Ajustar as orquestrações de pedido para que, no cenário de PayTV + Telefonia A La Carte, seja enviado ao TOA um item de OS específico para o serviço de Telefonia (além dos equipamentos de PayTV) permitindo a sua devida ativação integrada com a SURF. Para o cenário de Telefonia Solo, o fluxo de tramitação deve ser ajustado para acionar a criação automática da OS correspondente no TOA para execução das atividades de campo.
 
 
-Cenário de negócio proposto
+3. Cenário Técnico Atual (Resumido)
+O fluxo ProcessSoftwareFulfillmentOrder não possui lógica para disparar a criação de OS para o cenário de Telefonia Solo.
+O componente CommunicationsWorkOrderEBSPS não realiza o mapeamento do iccid (sem equipamentos físicos) na chamada de OS e sempre executa callback para o Salesforce.
+O fluxo ProcessOSEReturnFulfillmentOrderEBFMIP está limitado a processar retornos de itens da categoria "equipamento" e realiza chamadas obrigatórias ao serviço de Inventário.
+O BPEL UpdateFulfillmentOrderOSBPEL não atualiza o número da OS no item específico de Telefonia no Maestro.
+4. Cenário Técnico Proposto (Resumido)
+Disparo de OS: Ajustar o ProcessSoftwareFulfillmentOrder para disparar a criação da OS sob a condição de ser um pedido de Telefonia Solo ou Habilitação de A La Carte PayTV.
+Payload e Callback: Mapear o iccid e remover dados de equipamento físico no payload de criação de OS no CommunicationsWorkOrderEBSPS, além de desabilitar o callback ao Salesforce (pendente de validação).
+Retorno e Inventário: Ajustar o ProcessOSEReturnFulfillmentOrderEBFMIP para processar a subcategoria "Telefonia_Plano" e desviar (não executar) o fluxo de Inventário para estes itens.
+Atualização do Maestro: Ajustar o UpdateFulfillmentOrderOSBPEL para localizar o item de Telefonia e gravar o número da OS gerada nele.
