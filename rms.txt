@@ -1,0 +1,10 @@
+Cenario de negócio atual:
+Hoje no cenário de PayTV+Telefonia a OS gerada no TOA não possui um item especifico para o produto Telefonia. E para o cenário de Telefonia Solo, não é gerada nenhuma OS no TOA
+
+Cenario de Negocio proposto
+Ajustar os fluxos do Maestro para que ele envie as informações para o TOA gerar um item de OS especifico para Telefonia, e no cenário de telefonia Solo, ele deve chamar o TOA para geração de OS
+
+Cenario Técnico atual
+
+
+Cenário de negócio proposto
