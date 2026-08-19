@@ -1,27 +1,164 @@
-### Descrição da RM
+<?xml version="1.0" encoding="UTF-8" ?>
+<xsl:stylesheet version="1.0" xmlns:oraxsl="http://www.oracle.com/XSL/Transform/java"
+                xmlns:xp20="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.Xpath20"
+                xmlns:ns0="http://xmlns.oracle.com/EnterpriseServices/Core/CustomerParty/V2"
+                xmlns:xref="http://www.oracle.com/XSL/Transform/java/oracle.tip.xref.xpath.XRefXPathFunctions"
+                xmlns:ns1="http://www.sky.com.br/message/FulfillmentOrder/V3"
+                xmlns:mhdr="http://www.oracle.com/XSL/Transform/java/oracle.tip.mediator.service.common.functions.MediatorExtnFunction"
+                xmlns:oraext="http://www.oracle.com/XSL/Transform/java/oracle.tip.pc.services.functions.ExtFunc"
+                xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                xmlns:dvm="http://www.oracle.com/XSL/Transform/java/oracle.tip.dvm.LookupValue"
+                xmlns:oracle-xsl-mapper="http://www.oracle.com/xsl/mapper/schemas"
+                xmlns:socket="http://www.oracle.com/XSL/Transform/java/oracle.tip.adapter.socket.ProtocolTranslator"
+                xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+                xmlns:tns="http://www.sky.com.br/message/CommunicationsWorkOrderEBS/V2"
+                exclude-result-prefixes="xsd xsi oracle-xsl-mapper xsl ns0 ns1 tns oraxsl xp20 xref mhdr oraext dvm socket"
+                xmlns:fault="http://www.sky.com.br/Commons/FaultType/V1"
+                xmlns:ns10="http://www.sky.com.br/core/Equipment/EquipmentEBO/V1"
+                xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                xmlns:ns12="http://www.sky.com.br/Core/Person/SellerEBO/V1"
+                xmlns:ns13="http://www.sky.com.br/Core/Commons/PriceType/V1"
+                xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                xmlns:ns14="http://www.sky.com.br/Common/Communication/PhoneType/V1"
+                xmlns:ns5="http://www.sky.com.br/Core/PaymentEBO/V1"
+                xmlns:ns6="http://www.sky.com.br/Core/FulfillmentOrder/V1"
+                xmlns:header="http://www.sky.com.br/Commons/HeaderType/V1"
+                xmlns:ns7="http://www.sky.com.br/Core/SalesQuoteItemEBO/V1"
+                xmlns:aco="http://www.sky.com.br/Core/AccountEBO/V1"
+                xmlns:ns3="http://www.sky.com.br/Common/Product/CommercializationPlanType/V1"
+                xmlns:ns4="http://www.sky.com.br/service/FulfillmentOrder/V3"
+                xmlns:ns8="http://www.sky.com.br/Core/ProductEBO/V1"
+                xmlns:ns2="http://www.sky.com.br/Commons/BusinessReturnType/V1"
+                xmlns:ns9="http://www.sky.com.br/Core/SalesQuoteEBO/V1"
+                xmlns:ns11="http://www.sky.com.br/core/InvoiceEBO/V1"
+                xmlns:ns16="http://www.sky.com.br/Core/Financial/ScoreEBO/V1"
+                xmlns:cust="http://www.sky.com.br/Core/CustomerEBO/V1"
+                xmlns:ns15="http://www.sky.com.br/Core/Commons/DocumentType/V1"
+                xmlns:ebm="http://www.sky.com.br/message/B2B/Sales/V1"
+                xmlns:bnk="http://www.sky.com.br/Core/Payment/BankAccountEBO/V1"
+                xmlns:part="http://www.sky.com.br/Core/PartnerEBO/V1"
+                xmlns:prop="http://www.sky.com.br/Core/ProposalEBO/V1"
+                xmlns:cc="http://www.sky.com.br/Core/Payment/CreditCardEBO/V1"
+                xmlns:loc="http://www.sky.com.br/Core/Location/LocationEBO/V1"
+                xmlns:dep="http://www.sky.com.br/Core/DebtInstallmentEBO/V1"
+                xmlns:ns17="http://xmlns.oracle.com/EnterpriseObjects/Core/EBO/FulfillmentOrder/V1"
+                xmlns:ns21="http://xmlns.oracle.com/EnterpriseObjects/Core/EBO/Validation/V1"
+                xmlns:ns23="urn:oasis:names:tc:xacml:2.0:policy:schema:cd:04"
+                xmlns:ns18="http://xmlns.oracle.com/EnterpriseServices/FulfillmentOrder/V1"
+                xmlns:ns19="urn:oasis:names:tc:xacml:2.0:context:schema:cd:04"
+                xmlns:ns20="http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/Common/V2"
+                xmlns:svcdoc="http://xmlns.oracle.com/Services/Documentation/V1"
+                xmlns:corecom="http://xmlns.oracle.com/EnterpriseObjects/Core/Common/V2"
+                xmlns:ns25="http://xmlns.oracle.com/EnterpriseObjects/Core/Custom/EBO/FulfillmentOrder/V1"
+                xmlns:ebs="http://xmlns.oracle.com/EnterpriseServices/Core/FulfillmentOrder/V1"
+                xmlns:ns22="http://schemas.xmlsoap.org/ws/2003/03/addressing"
+                xmlns:ns24="http://www.sky.com.br/ArchitectureSchemas">
+  <oracle-xsl-mapper:schema>
+    <!--SPECIFICATION OF MAP SOURCES AND TARGETS, DO NOT MODIFY.-->
+    <oracle-xsl-mapper:mapSources>
+      <oracle-xsl-mapper:source type="WSDL">
+        <oracle-xsl-mapper:schema location="../xsd/CreateSalesRequestEBM.xsd"/>
+        <oracle-xsl-mapper:rootElement name="CreateSalesRequestEBM"
+                                       namespace="http://www.sky.com.br/message/B2B/Sales/V1"/>
+      </oracle-xsl-mapper:source>
+      <oracle-xsl-mapper:source type="WSDL">
+        <oracle-xsl-mapper:schema location="../xsd/ProcessCreateCustomerResponseEBM.xsd"/>
+        <oracle-xsl-mapper:rootElement name="ProcessCreateCustomerResponseEBM"
+                                       namespace="http://xmlns.oracle.com/EnterpriseServices/Core/CustomerParty/V2"/>
+        <oracle-xsl-mapper:param name="InvokeCreateCustomerOutputVariable.parameters"/>
+      </oracle-xsl-mapper:source>
+      <oracle-xsl-mapper:source type="WSDL">
+        <oracle-xsl-mapper:schema location="../wsdl/ProcessCreateFulfillmentOrderCCPProvABCSImplPS.wsdl"/>
+        <oracle-xsl-mapper:rootElement name="ProcessCreateFulfillmentOrderResponseEBM"
+                                       namespace="http://www.sky.com.br/message/FulfillmentOrder/V3"/>
+        <oracle-xsl-mapper:param name="InvokeCreateFulfillmentOrderOutputVariable.parameters"/>
+      </oracle-xsl-mapper:source>
+      <oracle-xsl-mapper:source type="WSDL">
+        <oracle-xsl-mapper:schema location="oramds:/apps/AIAMetaData/AIAComponents/ExtensionServiceLibrary/SOA/EnterpriseBusinessServiceLibrary/Industry/Communications/EBO/FulfillmentOrder/V1/CommunicationsFulfillmentOrderEBSV1Abstract.wsdl"/>
+        <oracle-xsl-mapper:rootElement name="QueryFulfillmentOrderResponseEBM"
+                                       namespace="http://xmlns.oracle.com/EnterpriseObjects/Core/EBO/FulfillmentOrder/V1"/>
+        <oracle-xsl-mapper:param name="InvokeQueryFulfillmentOrder_QueryFulfillmentOrder_OutputVariable.QueryFulfillmentOrderResponseEBM"/>
+      </oracle-xsl-mapper:source>
+    </oracle-xsl-mapper:mapSources>
+    <oracle-xsl-mapper:mapTargets>
+      <oracle-xsl-mapper:target type="WSDL">
+        <oracle-xsl-mapper:schema location="../xsd/CreateWorkOrderRequestEBM.xsd"/>
+        <oracle-xsl-mapper:rootElement name="CreateWorkOrderRequestEBM"
+                                       namespace="http://www.sky.com.br/message/CommunicationsWorkOrderEBS/V2"/>
+      </oracle-xsl-mapper:target>
+    </oracle-xsl-mapper:mapTargets>
+    <!--GENERATED BY ORACLE XSL MAPPER 12.1.3.0.0(XSLT Build 140529.0700.0211) AT [MON SEP 14 13:11:58 GMT-03:00 2020].-->
+  </oracle-xsl-mapper:schema>
+  <!--User Editing allowed BELOW this line - DO NOT DELETE THIS LINE-->
+  <xsl:param name="InvokeCreateFulfillmentOrderOutputVariable.parameters"/>
+  <xsl:param name="InvokeCreateCustomerOutputVariable.parameters"/>
+  <xsl:param name="InvokeQueryFulfillmentOrder_QueryFulfillmentOrder_OutputVariable.QueryFulfillmentOrderResponseEBM"/>
+  <xsl:variable name="DocumentoTitular">
+    <xsl:choose>
+        <xsl:when test="string-length(normalize-space(/ebm:CreateSalesRequestEBM/ebm:Customer/ebm:lineAccountHolderDocument)) > 0">
+            <xsl:value-of select="/ebm:CreateSalesRequestEBM/ebm:Customer/ebm:lineAccountHolderDocument"/>
+        </xsl:when>
 
-Ajuste no fluxo do **ProcessCoreSalesEBF** para os cenários de **antecipação da criação da Ordem de Serviço (OS)**, garantindo que as informações relacionadas aos produtos/serviços de **Telefonia** sejam corretamente tratadas e enviadas ao **TOA**.
+        <xsl:when test="string-length(normalize-space(/ebm:CreateSalesRequestEBM/ebm:Customer/ebm:documentList/ebm:document[ns15:documentType='1']/ns15:documentNumber)) > 0">
+            <xsl:value-of select="/ebm:CreateSalesRequestEBM/ebm:Customer/ebm:documentList/ebm:document[ns15:documentType='1']/ns15:documentNumber"/>
+        </xsl:when>
 
-### Cenário de Negócio Atual
+        <xsl:otherwise>
+            <xsl:value-of select="/ebm:CreateSalesRequestEBM/ebm:Customer/ebm:documentList/ebm:document[ns15:documentType='2']/ns15:documentNumber"/>
+        </xsl:otherwise>
+    </xsl:choose>
+</xsl:variable>
+  <xsl:template match="/">
+    <tns:CreateWorkOrderRequestEBM>
+      <tns:EBMHeader>
+        <header:consumerSystem>Maestro</header:consumerSystem>
+        <header:userId>Maestro</header:userId>
+      </tns:EBMHeader>
+      <cust:customerId>
+        <xsl:value-of select="InvokeCreateCustomerOutputVariable.parameters/ns0:ProcessCreateCustomerResponseEBM/aco:accountId"/>
+      </cust:customerId>
+      <ns6:fulfillmentOrderId>
+        <xsl:value-of select="$InvokeCreateFulfillmentOrderOutputVariable.parameters/ns1:ProcessCreateFulfillmentOrderResponseEBM/ns1:FulfillmentOrder/ns6:fulfillmentOrderId"/>
+      </ns6:fulfillmentOrderId>
+      <ns8:inventoryInformation>
+        <xsl:value-of select="concat(
+    '&lt;Service&gt;',
+    '&lt;Lin&gt;&lt;Description&gt;DDD&lt;/Description&gt;&lt;value&gt;',
+    /ebm:CreateSalesRequestEBM/ebm:Customer/ebm:lineLocalAreaCode,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-Nos cenários em que ocorre a **antecipação da criação da OS** para pedidos que possuem produtos/serviços de Telefonia, as informações necessárias para execução da atividade não estão sendo encaminhadas corretamente ao TOA.
+    '&lt;Lin&gt;&lt;Description&gt;CustomerOrderIdentifier&lt;/Description&gt;&lt;value&gt;',
+    $InvokeCreateFulfillmentOrderOutputVariable.parameters/ns1:ProcessCreateFulfillmentOrderResponseEBM/ns1:FulfillmentOrder/ns6:fulfillmentOrderId,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-Como consequência, a Ordem de Serviço pode ser criada sem todas as informações necessárias para o correto atendimento do pedido de Telefonia.
+    '&lt;Lin&gt;&lt;Description&gt;AccountIdentifier&lt;/Description&gt;&lt;value&gt;',
+    $InvokeCreateCustomerOutputVariable.parameters/ns0:ProcessCreateCustomerResponseEBM/aco:accountId,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-### Cenário de Negócio Esperado
+    '&lt;Lin&gt;&lt;Description&gt;NumeroOriginal&lt;/Description&gt;&lt;value&gt;',
+    /ebm:CreateSalesRequestEBM/ebm:Customer/ebm:linePortInOriginalNumber,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-Nos cenários de **antecipação da criação da OS**, quando o pedido possuir produtos/serviços de Telefonia, todas as informações necessárias devem ser consideradas durante o processamento e encaminhadas corretamente ao TOA.
+    '&lt;Lin&gt;&lt;Description&gt;OperadoraOriginal&lt;/Description&gt;&lt;value&gt;',
+    /ebm:CreateSalesRequestEBM/ebm:Customer/ebm:linePortInOriginalCarrier,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-Dessa forma, o TOA receberá os dados necessários para a correta criação e execução da Ordem de Serviço.
+    '&lt;Lin&gt;&lt;Description&gt;DocumentoTitular&lt;/Description&gt;&lt;value&gt;',
+    $DocumentoTitular,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-### Cenário Técnico Atual
+    '&lt;Lin&gt;&lt;Description&gt;planCode&lt;/Description&gt;&lt;value&gt;',
+    $InvokeQueryFulfillmentOrder_QueryFulfillmentOrder_OutputVariable.QueryFulfillmentOrderResponseEBM/ns17:QueryFulfillmentOrderResponseEBM/ns17:DataArea/ns17:QueryFulfillmentOrderResponse/ns17:FulfillmentOrderLine[
+        ns17:ServiceActionCode='ADD'
+        and corecom:InstalledProductReference/corecom:Custom/ns20:SubCategory='Telefonia_Plano'
+    ]/corecom:ItemReference/corecom:SpecificationGroup/corecom:Specification[
+        corecom:Name='Telefonia Plano Parceiro'
+    ]/corecom:Value,
+    '&lt;/value&gt;&lt;/Lin&gt;',
 
-Atualmente, o fluxo do **ProcessCoreSalesEBF** responsável pelos cenários de antecipação da criação da OS não contempla corretamente o tratamento e/ou mapeamento das informações de Telefonia antes da integração com o TOA.
-
-Com isso, a requisição enviada ao TOA pode não conter corretamente os dados relacionados à Telefonia.
-
-### Cenário Técnico Esperado
-
-O fluxo do **ProcessCoreSalesEBF** será ajustado para que, nos cenários de antecipação da criação da OS, seja realizada a correta identificação e o tratamento das informações de Telefonia.
-
-Essas informações deverão ser devidamente mapeadas na mensagem de integração enviada ao **TOA**, garantindo que os dados necessários estejam disponíveis para o processamento da Ordem de Serviço.
+    '&lt;/Service&gt;'
+)"/>
+      </ns8:inventoryInformation>
+    </tns:CreateWorkOrderRequestEBM>
+  </xsl:template>
+</xsl:stylesheet>
