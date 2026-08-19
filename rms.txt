@@ -1,1 +1,27 @@
-Ajuste no fluxo do ProcessCoreSalesEBF, para os cenários de antencipação de criação de OS, para que ele envie os dados de Telefonia para o MOS.
+### Descrição da RM
+
+Ajuste no fluxo do **ProcessCoreSalesEBF** para os cenários de **antecipação da criação da Ordem de Serviço (OS)**, garantindo que as informações relacionadas aos produtos/serviços de **Telefonia** sejam corretamente tratadas e enviadas ao **TOA**.
+
+### Cenário de Negócio Atual
+
+Nos cenários em que ocorre a **antecipação da criação da OS** para pedidos que possuem produtos/serviços de Telefonia, as informações necessárias para execução da atividade não estão sendo encaminhadas corretamente ao TOA.
+
+Como consequência, a Ordem de Serviço pode ser criada sem todas as informações necessárias para o correto atendimento do pedido de Telefonia.
+
+### Cenário de Negócio Esperado
+
+Nos cenários de **antecipação da criação da OS**, quando o pedido possuir produtos/serviços de Telefonia, todas as informações necessárias devem ser consideradas durante o processamento e encaminhadas corretamente ao TOA.
+
+Dessa forma, o TOA receberá os dados necessários para a correta criação e execução da Ordem de Serviço.
+
+### Cenário Técnico Atual
+
+Atualmente, o fluxo do **ProcessCoreSalesEBF** responsável pelos cenários de antecipação da criação da OS não contempla corretamente o tratamento e/ou mapeamento das informações de Telefonia antes da integração com o TOA.
+
+Com isso, a requisição enviada ao TOA pode não conter corretamente os dados relacionados à Telefonia.
+
+### Cenário Técnico Esperado
+
+O fluxo do **ProcessCoreSalesEBF** será ajustado para que, nos cenários de antecipação da criação da OS, seja realizada a correta identificação e o tratamento das informações de Telefonia.
+
+Essas informações deverão ser devidamente mapeadas na mensagem de integração enviada ao **TOA**, garantindo que os dados necessários estejam disponíveis para o processamento da Ordem de Serviço.
